@@ -8,7 +8,7 @@ COPTS=-ecc -q -w -c -ml -zl -D__MSDOS__ -D__PDOS__ -fpi87 -s -zdp -zu -I. -I..\p
 
 all: clean ar.exe
 
-ar.exe: append.obj ar.obj conv.c delete.obj display.obj extract.obj lib.obj ranlib,obj replace.obj report.obj
+ar.exe: append.obj ar.obj conv.obj delete.obj display.obj extract.obj lib.obj ranlib,obj replace.obj report.obj
   wlink File ar.obj Name ar.exe Form dos Library temp.lib,..\pdos\pdpclib\watcom.lib Option quiet,map
 
 .c.obj:

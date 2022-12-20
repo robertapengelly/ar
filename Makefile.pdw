@@ -6,7 +6,7 @@ CC=gccwin
 LD=ldwin
 
 COPTS=-S -O2 -fno-common -ansi -I. -I../pdos/pdpclib -D__WIN32__ -D__NOBIVA__ -D__PDOS__
-COBJ=append.o ar.o conv.c delete.o display.o extract.o lib.o ranlib.o replace.o report.o
+COBJ=append.o ar.o conv.o delete.o display.o extract.o lib.o ranlib.o replace.o report.o
 
 all: clean ar.exe
 
