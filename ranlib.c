@@ -28,11 +28,11 @@ struct aout_exec {
 
 struct aout_nlist {
 
-    char n_strx[4];
+    unsigned char n_strx[4];
     unsigned char n_type;
     
-    char n_other;
-    char n_desc[2];
+    unsigned char n_other;
+    unsigned char n_desc[2];
     
     unsigned char n_value[4];
 
@@ -174,6 +174,9 @@ void ranlib (void) {
         
             free (object);
             
+            offset += sizeof (hdr);
+            offset += bytes;
+            
             fseek (arfp, bytes, SEEK_CUR);
             continue;
         
@@ -191,10 +194,7 @@ void ranlib (void) {
     bytes = 0;
     
     for (i = 0; i < gstrtab.count; ++i) {
-    
-        bytes += gstrtab.strtabs[i].length;
-        bytes += 5;
-    
+        bytes += gstrtab.strtabs[i].length + 5;
     }
     
     for (i = 0; i < gstrtab.count; ++i) {
@@ -274,13 +274,6 @@ void ranlib (void) {
         if (fwrite (name, length, 1, tfp) != 1) {
             exit (EXIT_FAILURE);
         }
-        
-        /*length %= 2;
-        length++;
-        
-        for (j = 0; j < length; ++j) {
-            temp[j] = 0;
-        }*/
         
         temp[0] = 0;
         
