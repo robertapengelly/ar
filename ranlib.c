@@ -181,13 +181,13 @@ static void coff_get_symbols (void *object, long offset) {
                 unsigned char offset3 = (unsigned char) sym.Name[6];
                 unsigned char offset4 = (unsigned char) sym.Name[7];
                 
-                long offset = ((uint32_t) offset1 | (((uint32_t) offset2) << 8) | (((uint32_t) offset3) << 16) | (((uint32_t) offset4) << 24));
-                offset += string_table_start;
+                long final_offset = ((uint32_t) offset1 | (((uint32_t) offset2) << 8) | (((uint32_t) offset3) << 16) | (((uint32_t) offset4) << 24));
+                final_offset += string_table_start;
                 
                 strtab = xmalloc (sizeof (*strtab));
-                strtab->length = strlen ((char *) (object + offset));
+                strtab->length = strlen ((char *) (object + final_offset));
                 
-                strtab->name = xstrdup ((char *) (object + offset));
+                strtab->name = xstrdup ((char *) (object + final_offset));
                 strtab->offset = offset;
                 
                 add_strtab (&gstrtab, strtab);
