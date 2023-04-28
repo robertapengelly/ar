@@ -52,7 +52,7 @@ void extract (char *fname) {
             bytes++;
         }
         
-        if (memcmp (hdr.name, "__.SYMDEF", 9) == 0) {
+        if (memcmp (hdr.name, "/", 1) == 0) {
         
             fseek (arfp, bytes, SEEK_CUR);
             continue;

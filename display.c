@@ -36,7 +36,7 @@ void display (void) {
         
         fseek (arfp, bytes, SEEK_CUR);
         
-        if (memcmp (hdr.name, "__.SYMDEF", 9) == 0) {
+        if (memcmp (hdr.name, "/", 1) == 0) {
             continue;
         }
         

@@ -233,7 +233,7 @@ void ranlib (void) {
             bytes++;
         }
         
-        if (memcmp (hdr.name, "__.SYMDEF", 9) == 0) {
+        if (memcmp (hdr.name, "/", 1) == 0) {
         
             fseek (arfp, bytes, SEEK_CUR);
             continue;
@@ -302,10 +302,10 @@ void ranlib (void) {
     memset (temp, 0x20, 16);
     temp[0] = '0';
     
-    len = 9;
-    memcpy (header.name, "__.SYMDEF", len);
+    len = 1;
+    memcpy (header.name, "/", len);
     
-    while (len < 16) {
+    while (len < 17) {
         header.name[len++] = 0x20;
     }
     
@@ -393,7 +393,7 @@ void ranlib (void) {
             bytes++;
         }
         
-        if (memcmp (hdr.name, "__.SYMDEF", 9) == 0) {
+        if (memcmp (hdr.name, "/", 1) == 0) {
         
             fseek (arfp, bytes, SEEK_CUR);
             continue;
