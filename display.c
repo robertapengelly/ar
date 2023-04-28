@@ -34,7 +34,7 @@ void display (void) {
             bytes++;
         }
         
-        fseek (arfp, bytes, SEEK_CUR);
+        fseek (arfp, bytes - 1, SEEK_CUR);
         
         if (memcmp (hdr.name, "/", 1) == 0) {
             continue;

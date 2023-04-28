@@ -176,7 +176,12 @@ static void coff_get_symbols (void *object, long offset) {
             
             } else {
             
-                long offset = ((uint32_t) sym.Name[4] | (((uint32_t) sym.Name[5]) << 8) | (((uint32_t) sym.Name[6]) << 16) | (((uint32_t) sym.Name[7]) << 24));
+                unsigned char offset1 = (unsigned char) sym.Name[4];
+                unsigned char offset2 = (unsigned char) sym.Name[5];
+                unsigned char offset3 = (unsigned char) sym.Name[6];
+                unsigned char offset4 = (unsigned char) sym.Name[7];
+                
+                long offset = ((uint32_t) offset1 | (((uint32_t) offset2) << 8) | (((uint32_t) offset3) << 16) | (((uint32_t) offset4) << 24));
                 offset += string_table_start;
                 
                 strtab = xmalloc (sizeof (*strtab));
@@ -305,7 +310,7 @@ void ranlib (void) {
     len = 1;
     memcpy (header.name, "/", len);
     
-    while (len < 17) {
+    while (len < 16) {
         header.name[len++] = 0x20;
     }
     
