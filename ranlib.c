@@ -164,10 +164,22 @@ static void coff_get_symbols (void *object, long offset) {
         
             struct strtab *strtab;
             
-            if (sym.Name[0] != 0 && sym.Name[1] != 0 && sym.Name[2] != 0 && sym.Name[3] != 0) {
+            if (sym.Name[0] != 0) {
             
+                int i, len;
+                
+                for (i = 0, len = 0; i < 8; i++) {
+                
+                    if (sym.Name[i] == '\0') {
+                        break;
+                    }
+                    
+                    len++;
+                
+                }
+                
                 strtab = xmalloc (sizeof (*strtab));
-                strtab->length = strlen (sym.Name);
+                strtab->length = len;
                 
                 strtab->name = xstrdup (sym.Name);
                 strtab->offset = offset;
