@@ -59,15 +59,15 @@ void replace (char *fname) {
         
         bytes = conv_dec (hdr.size, 10);
         
+        if (bytes % 2) {
+            bytes++;
+        }
+        
         if (memcmp (hdr.name, "/", 1) == 0) {
         
             fseek (arfp, bytes, SEEK_CUR);
             continue;
         
-        }
-        
-        if (bytes % 2) {
-            bytes++;
         }
         
         if (memcmp (hdr.name, temp, len) == 0) {

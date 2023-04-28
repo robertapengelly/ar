@@ -30,18 +30,15 @@ void display (void) {
         
         bytes = conv_dec (hdr.size, 10);
         
-        if (memcmp (hdr.name, "/", 1) == 0) {
-        
-            fseek (arfp, bytes, SEEK_CUR);
-            continue;
-        
-        }
-        
         if (bytes % 2) {
             bytes++;
         }
         
         fseek (arfp, bytes, SEEK_CUR);
+        
+        if (memcmp (hdr.name, "/", 1) == 0) {
+            continue;
+        }
         
         memcpy (temp, hdr.name, 16);
         

@@ -234,15 +234,15 @@ void ranlib (void) {
         
         bytes = conv_dec (hdr.size, 10);
         
+        if (bytes % 2) {
+            bytes++;
+        }
+        
         if (memcmp (hdr.name, "/", 1) == 0) {
         
             fseek (arfp, bytes, SEEK_CUR);
             continue;
         
-        }
-        
-        if (bytes % 2) {
-            bytes++;
         }
         
         object = xmalloc (bytes);
@@ -369,7 +369,17 @@ void ranlib (void) {
             exit (EXIT_FAILURE);
         }
         
-        temp[0] = 0;
+        temp[0] = '\0';
+        
+        if (fwrite (temp, 1, 1, tfp) != 1) {
+            exit (EXIT_FAILURE);
+        }
+    
+    }
+    
+    if (bytes % 2) {
+    
+        temp[0] = '\0';
         
         if (fwrite (temp, 1, 1, tfp) != 1) {
             exit (EXIT_FAILURE);
@@ -394,15 +404,15 @@ void ranlib (void) {
         
         bytes = conv_dec (hdr.size, 10);
         
+        if (bytes % 2) {
+            bytes++;
+        }
+        
         if (memcmp (hdr.name, "/", 1) == 0) {
         
             fseek (arfp, bytes, SEEK_CUR);
             continue;
         
-        }
-        
-        if (bytes % 2) {
-            bytes++;
         }
         
         if (fwrite (&hdr, sizeof (hdr), 1, tfp) != 1) {
