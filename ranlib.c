@@ -292,7 +292,13 @@ void ranlib (void) {
     }
     
     for (i = 0; i < gstrtab.count; ++i) {
+    
         gstrtab.strtabs[i].offset += bytes;
+        
+        if (bytes % 2) {
+            gstrtab.strtabs[i].offset++;
+        }
+    
     }
     
     if (fwrite ("!<arch>\x0A", 8, 1, tfp) != 1) {
