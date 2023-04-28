@@ -11,7 +11,7 @@
 
 void append (FILE *ofp, char *fname) {
 
-    char aout_magic[2];
+    unsigned char aout_magic[2];
     FILE *tfp;
     
     struct ar_header header;
@@ -21,6 +21,7 @@ void append (FILE *ofp, char *fname) {
     long bytes, len, read;
     
     int need_newline = 0;
+    int valid = 0;
     
     if ((tfp = fopen (fname, "r+b")) == NULL) {
     
@@ -38,11 +39,13 @@ void append (FILE *ofp, char *fname) {
     
     }
     
-    if (aout_magic[0] != 0x07 || aout_magic[1] != 0x01) {
+    valid = ((aout_magic[0] == 0x07 && aout_magic[1] == 0x01) || (aout_magic[0] == 0x4C && aout_magic[1] == 0x01) || (aout_magic[0] == 64 && aout_magic[1] == 0x86));
+    
+    if (!valid) {
     
         fclose (tfp);
         
-        report_at (program_name, 0, REPORT_ERROR, "%s is not a valid a.out object", fname);
+        report_at (program_name, 0, REPORT_ERROR, "%s is not a valid a.out or coff object", fname);
         return;
     
     }

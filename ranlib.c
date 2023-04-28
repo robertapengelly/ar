@@ -11,6 +11,8 @@
 #include    "report.h"
 
 #define     GET_INT32(arr)              ((int32_t) arr[0] | (((int32_t) arr[1]) << 8) | (((int32_t) arr[2]) << 16) | (((int32_t) arr[3]) << 24))
+
+#define     GET_UINT16(arr)             ((uint32_t) arr[0] | (((uint32_t) arr[1]) << 8))
 #define     GET_UINT32(arr)             ((uint32_t) arr[0] | (((uint32_t) arr[1]) << 8) | (((uint32_t) arr[2]) << 16) | (((uint32_t) arr[3]) << 24))
 
 struct aout_exec {
@@ -35,6 +37,33 @@ struct aout_nlist {
     unsigned char n_desc[2];
     
     unsigned char n_value[4];
+
+};
+
+struct coff_exec {
+
+    unsigned char Machine[2];
+    unsigned char NumberOfSections[2];
+    
+    unsigned char TimeDateStamp[4];
+    unsigned char PointerToSymbolTable[4];
+    unsigned char NumberOfSymbols[4];
+    
+    unsigned char SizeOfOptionalHeader[2];
+    unsigned char Characteristics[2];
+
+};
+
+struct coff_symbol {
+
+    char Name[8];
+    unsigned char Value[4];
+    
+    unsigned char SectionNumber[2];
+    unsigned char Type[2];
+    
+    unsigned char StorageClass[1];
+    unsigned char NumberOfAuxSymbols[1];
 
 };
 
@@ -118,6 +147,56 @@ static void aout_get_symbols (void *object, long offset) {
 
 }
 
+static void coff_get_symbols (void *object, long offset) {
+
+    struct coff_exec *hdr = (struct coff_exec *) object;
+    
+    long sym_start = GET_UINT32 (hdr->PointerToSymbolTable);
+    long sym_cnt = GET_UINT32 (hdr->NumberOfSymbols);
+    long string_table_start = sym_start + (sizeof (struct coff_symbol) * sym_cnt);
+    
+    while (sym_cnt--) {
+    
+        struct coff_symbol sym;
+        memcpy (&sym, (char *) object + sym_start, sizeof (sym));
+        
+        if (sym.StorageClass[0] == 2 && GET_UINT16 (sym.SectionNumber) != 0) {
+        
+            struct strtab *strtab;
+            
+            if (sym.Name[0] != 0 && sym.Name[1] != 0 && sym.Name[2] != 0 && sym.Name[3] != 0) {
+            
+                strtab = xmalloc (sizeof (*strtab));
+                strtab->length = strlen (sym.Name);
+                
+                strtab->name = xstrdup (sym.Name);
+                strtab->offset = offset;
+                
+                add_strtab (&gstrtab, strtab);
+            
+            } else {
+            
+                long offset = ((uint32_t) sym.Name[4] | (((uint32_t) sym.Name[5]) << 8) | (((uint32_t) sym.Name[6]) << 16) | (((uint32_t) sym.Name[7]) << 24));
+                offset += string_table_start;
+                
+                strtab = xmalloc (sizeof (*strtab));
+                strtab->length = strlen ((char *) (object + offset));
+                
+                strtab->name = xstrdup ((char *) (object + offset));
+                strtab->offset = offset;
+                
+                add_strtab (&gstrtab, strtab);
+            
+            }
+        
+        }
+        
+        sym_start += sizeof (sym);
+    
+    }
+
+}
+
 void ranlib (void) {
 
     FILE *tfp = tmpfile ();
@@ -126,8 +205,11 @@ void ranlib (void) {
     struct ar_header header;
     long bytes, i, j, len, read, val;
     
-    char *object, temp[16];
+    unsigned char *object;
     void *contents;
+    
+    char temp[16];
+    int valid = 0;
     
     for (;;) {
     
@@ -170,7 +252,9 @@ void ranlib (void) {
         
         }
         
-        if (object[0] != 0x07 || object[1] != 0x01) {
+        valid = ((object[0] == 0x07 && object[1] == 0x01) || (object[0] == 0x4C && object[1] == 0x01) || (object[0] == 64 && object[1] == 0x86));
+        
+        if (!valid) {
         
             free (object);
             
@@ -182,7 +266,12 @@ void ranlib (void) {
         
         }
         
-        aout_get_symbols (object, offset + 8);
+        if (object[0] == 0x07 && object[1] == 0x01) {
+            aout_get_symbols (object, offset + 8);
+        } else {
+            coff_get_symbols (object, offset + 8);
+        }
+        
         free (object);
         
         offset += sizeof (hdr);
