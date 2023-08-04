@@ -269,7 +269,7 @@ void ranlib (void) {
         
         }
         
-        valid = ((object[0] == 0x07 && object[1] == 0x01) || (object[0] == 0x4C && object[1] == 0x01) || (object[0] == 64 && object[1] == 0x86));
+        valid = ((object[0] == 0x07 && object[1] == 0x01) || (object[0] == 0x4C && object[1] == 0x01) || (object[0] == 0x64 && object[1] == 0x86));
         
         if (!valid) {
         

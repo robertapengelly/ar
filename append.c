@@ -39,7 +39,7 @@ void append (FILE *ofp, char *fname) {
     
     }
     
-    valid = ((aout_magic[0] == 0x07 && aout_magic[1] == 0x01) || (aout_magic[0] == 0x4C && aout_magic[1] == 0x01) || (aout_magic[0] == 64 && aout_magic[1] == 0x86));
+    valid = ((aout_magic[0] == 0x07 && aout_magic[1] == 0x01) || (aout_magic[0] == 0x4C && aout_magic[1] == 0x01) || (aout_magic[0] == 0x64 && aout_magic[1] == 0x86));
     
     if (!valid) {
     

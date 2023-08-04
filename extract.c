@@ -49,7 +49,7 @@ void extract (char *fname) {
         bytes = conv_dec (hdr.size, 10);
         
         if (memcmp (hdr.name, "/", 1) == 0) {
-
+        
             if (bytes % 2) {
                 bytes++;
             }
@@ -60,7 +60,7 @@ void extract (char *fname) {
         }
         
         if (memcmp (hdr.name, temp, len) != 0) {
-
+        
             if (bytes % 2) {
                 bytes++;
             }
